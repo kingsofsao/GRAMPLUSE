@@ -42,7 +42,7 @@ RISK_COLORS = {
 st.markdown(
     """
     <style>
-    .stApp { background: #071a33; }
+    .stApp { background: #041225; }
     [data-testid="stHeader"] { background: #071a33; }
     [data-testid="stMainBlockContainer"] { background: #071a33; }
     [data-testid="stSidebar"] { background: #0b1f3a; }
