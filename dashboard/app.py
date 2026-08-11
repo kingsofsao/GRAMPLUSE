@@ -43,9 +43,9 @@ st.markdown(
     """
     <style>
     .stApp { background: #D94D1E; }
-    [data-testid="stHeader"] { background: #071a33; }
-    [data-testid="stMainBlockContainer"] { background: #071a33; }
-    [data-testid="stSidebar"] { background: #0b1f3a; }
+    [data-testid="stHeader"] { background: #D94D1E; }
+    [data-testid="stMainBlockContainer"] { background: #D94D1E; }
+    [data-testid="stSidebar"] { background: #D94D1E; }
     [data-testid="stSidebar"] * { color: #ffffff !important; }
     .hero {
         background: linear-gradient(135deg,#09203f,#174a75);
