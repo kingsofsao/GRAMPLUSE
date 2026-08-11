@@ -7,7 +7,7 @@ Runs the full GRAMPULSE pipeline end to end:
   -> risk -> recommendations -> explanations -> rankings.csv / alerts.csv
 
 Usage:
-    python src/run_pipeline.py [--input data/raw/mgnrega_raw.csv]
+    python src/run_pipeline.py [--input data/raw/vb_gram_g_raw.csv]
 """
 
 import argparse
@@ -81,6 +81,6 @@ def run(input_path: str, output_dir: str = "outputs", processed_dir: str = "data
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input", default="data/raw/mgnrega_raw.csv")
+    parser.add_argument("--input", default="data/raw/vb_gram_g_raw.csv")
     args = parser.parse_args()
     run(args.input)

@@ -1,9 +1,9 @@
 """
 generate_sample_data.py
 ------------------------
-Generates a synthetic MGNREGA-style village-level weekly job-demand dataset
+Generates a synthetic VB-G RAM G-style village-level weekly employment-demand dataset
 so GRAMPULSE can be developed, demoed, and tested without needing live
-portal access first. Replace this with real MGNREGA MIS exports/scrapes
+portal access first. Replace this with real VB-G RAM G MIS exports
 before the final demo if possible - real data will make the pitch stronger.
 
 Simulates:
@@ -12,7 +12,7 @@ Simulates:
   - Spike villages (sudden abnormal demand increase -> should be flagged EXTREME)
   - Low-volume villages (to test the minimum-volume safeguard)
 
-Output: data/raw/mgnrega_raw.csv
+Output: data/raw/vb_gram_g_raw.csv
 """
 
 import numpy as np
@@ -46,7 +46,7 @@ VILLAGE_PROFILES = [
 
 
 def seasonal_multiplier(week_idx):
-    """MGNREGA demand tends to rise in the dry/lean agricultural months.
+    """Rural employment demand tends to rise in the dry/lean agricultural months.
     Approximate a yearly seasonal wave."""
     return 1.0 + 0.25 * np.sin(2 * np.pi * (week_idx % 52) / 52)
 
@@ -122,8 +122,8 @@ def main():
         return dt.strftime("%d/%m/%y")
     df.loc[fmt_idx, "date"] = df.loc[fmt_idx, "date"].apply(messy_date)
 
-    df.to_csv("data/raw/mgnrega_raw.csv", index=False)
-    print(f"Wrote {len(df)} rows to data/raw/mgnrega_raw.csv")
+    df.to_csv("data/raw/vb_gram_g_raw.csv", index=False)
+    print(f"Wrote {len(df)} rows to data/raw/vb_gram_g_raw.csv")
 
 
 if __name__ == "__main__":

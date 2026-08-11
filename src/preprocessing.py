@@ -1,7 +1,7 @@
 """
 preprocessing.py
 ------------------
-Cleans raw MGNREGA data:
+Cleans rural employment-demand data:
   - normalizes dates into a consistent format
   - standardizes village name variants (case/spacing) into one canonical ID
   - removes exact duplicate records
@@ -14,6 +14,7 @@ This is the step the poster refers to as "Cleaning & Standardization".
 import re
 import pandas as pd
 import numpy as np
+from config import program_for_date
 
 
 def _parse_date_cell(value):
@@ -112,6 +113,7 @@ def build_weekly_series(df: pd.DataFrame) -> pd.DataFrame:
         .agg(demand=("demand", "sum"), date=("date", "min"))
     )
     weekly = weekly.sort_values(["village_id", "year", "week"]).reset_index(drop=True)
+    weekly["program"] = weekly["date"].apply(program_for_date)
     return weekly
 
 
@@ -127,7 +129,7 @@ def clean_pipeline(df: pd.DataFrame) -> pd.DataFrame:
 if __name__ == "__main__":
     from data_loader import load_raw_csv
 
-    raw = load_raw_csv("data/raw/mgnrega_raw.csv")
+    raw = load_raw_csv("data/raw/vb_gram_g_raw.csv")
     weekly = clean_pipeline(raw)
     weekly.to_csv("data/processed/village_weekly.csv", index=False)
     print(f"\nWrote {len(weekly)} weekly rows to data/processed/village_weekly.csv")

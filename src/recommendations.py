@@ -5,7 +5,7 @@ Maps risk -> recommended administrative action.
 
 Deliberately phrased as "review"/"assess" language rather than asserting
 a confirmed cause (e.g. never "this village is in financial crisis"),
-since elevated MGNREGA demand can stem from several different underlying
+since elevated employment demand under VB-G RAM G can stem from several different underlying
 drivers (seasonal patterns, drought, migration, reporting changes, etc).
 DMS flags where to look, not what is definitely happening.
 """
@@ -15,7 +15,7 @@ import pandas as pd
 RECOMMENDATIONS = {
     "LOW": "Continue routine monitoring. No administrative action required at this time.",
     "MODERATE": "Increase monitoring frequency. Review recent employment demand trends for this village.",
-    "HIGH": "Review pending employment demand and wage payment status. Assess availability of MGNREGA "
+    "HIGH": "Review pending employment demand and wage payment status. Assess availability of VB-G RAM G "
             "work and consider additional employment allocation.",
     "EXTREME": "Recommend immediate administrative review. Prioritize this village for on-ground "
                "assessment of employment demand and investigate local socioeconomic indicators before "

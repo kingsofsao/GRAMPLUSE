@@ -1,12 +1,12 @@
 """
 data_loader.py
 ---------------
-Loads raw MGNREGA-style CSV data into a DataFrame.
+Loads rural employment-demand CSV data into a DataFrame.
 
 Expected minimum columns (case-insensitive, flexible order):
     state, district, block, panchayat, village, date, demand
 
-Swap `load_raw_csv` for a scraper/API call against the MGNREGA MIS portal
+Swap `load_raw_csv` for a connector/API call against the VB-G RAM G MIS
 when you have real data access; everything downstream only depends on
 this function returning a DataFrame with those columns.
 """
@@ -28,6 +28,6 @@ def load_raw_csv(path: str) -> pd.DataFrame:
 
 
 if __name__ == "__main__":
-    df = load_raw_csv("data/raw/mgnrega_raw.csv")
+    df = load_raw_csv("data/raw/vb_gram_g_raw.csv")
     print(df.head())
     print(f"\n{len(df)} rows loaded")

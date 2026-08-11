@@ -9,7 +9,7 @@ The dashboard uses the existing GRAMPULSE analytical pipeline and adds:
 - village drill-down with anomaly markers
 - DMS component visualization
 - ranked alerts and explainability
-- optional MGNREGA CSV upload
+- optional VB-G RAM G employment-demand CSV upload
 - optional village coordinates CSV upload
 """
 
@@ -23,9 +23,10 @@ import streamlit as st
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 from run_pipeline import run  # noqa: E402
+from config import ACT_EFFECTIVE_DATE, ACT_NAME, GUARANTEED_DAYS, PROGRAM_SHORT_NAME  # noqa: E402
 
 st.set_page_config(
-    page_title="GRAMPULSE | Rural Distress Early Warning",
+    page_title="GRAMPULSE | VB-G RAM G Early Warning",
     page_icon="🌱",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -42,10 +43,10 @@ RISK_COLORS = {
 st.markdown(
     """
     <style>
-    .stApp { background: #D94D1E; }
-    [data-testid="stHeader"] { background: #D94D1E; }
-    [data-testid="stMainBlockContainer"] { background: #D94D1E; }
-    [data-testid="stSidebar"] { background: #D94D1E; }
+    .stApp { background: #071a33; }
+    [data-testid="stHeader"] { background: #071a33; }
+    [data-testid="stMainBlockContainer"] { background: #071a33; }
+    [data-testid="stSidebar"] { background: #0b1f3a; }
     [data-testid="stSidebar"] * { color: #ffffff !important; }
     .hero {
         background: linear-gradient(135deg,#09203f,#174a75);
@@ -81,7 +82,10 @@ st.markdown(
 
 
 def _default_data_path():
-    return os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "raw", "mgnrega_raw.csv"))
+    base = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "raw"))
+    current = os.path.join(base, "vb_gram_g_raw.csv")
+    legacy = os.path.join(base, "mgnrega_raw.csv")
+    return current if os.path.exists(current) else legacy
 
 
 @st.cache_data(show_spinner="Running GRAMPULSE analytics...")
@@ -112,7 +116,7 @@ def sidebar():
     st.sidebar.divider()
 
     default_path = _default_data_path()
-    uploaded = st.sidebar.file_uploader("MGNREGA demand CSV", type=["csv"])
+    uploaded = st.sidebar.file_uploader("VB-G RAM G employment-demand CSV", type=["csv"])
 
     if uploaded:
         data = uploaded.getvalue()
@@ -120,7 +124,7 @@ def sidebar():
         with open(tmp_path, "wb") as f:
             f.write(data)
         input_path = tmp_path
-        st.sidebar.success("Custom MGNREGA dataset loaded")
+        st.sidebar.success("Custom VB-G RAM G dataset loaded")
     else:
         input_path = default_path
         st.sidebar.info("Using bundled sample data")
@@ -190,7 +194,7 @@ def overview(latest):
         st.metric("Average DMS", f"{avg_dms:.1f} / 100")
         st.progress(min(max(avg_dms / 100, 0), 1))
         st.info(
-            "GRAMPULSE combines demand-growth speed, historical intensity and anomaly signals "
+            "GRAMPULSE combines employment-demand growth speed, historical intensity and anomaly signals "
             "into the Distress Momentum Score (DMS)."
         )
 
@@ -237,7 +241,7 @@ def risk_map(latest, coords_df):
                     hovertemplate=(
                         "<b>%{text}</b><br>"
                         "DMS: %{customdata[0]:.1f}<br>"
-                        "Demand: %{customdata[1]:.0f}<br>"
+                        "Employment demand: %{customdata[1]:.0f}<br>"
                         "Risk: " + risk + "<extra></extra>"
                     ),
                     marker=dict(size=12 if risk in ["HIGH", "EXTREME"] else 9,
@@ -292,7 +296,7 @@ def village_detail(result, latest):
 
     fig = go.Figure()
     fig.add_trace(go.Scatter(
-        x=history["date"], y=history["demand"], mode="lines+markers", name="Weekly demand"
+        x=history["date"], y=history["demand"], mode="lines+markers", name="Weekly employment demand"
     ))
     anomalies = history[history["anomaly_detected"] == True]
     if not anomalies.empty:
@@ -300,7 +304,7 @@ def village_detail(result, latest):
             x=anomalies["date"], y=anomalies["demand"], mode="markers",
             name="Detected anomaly", marker=dict(size=12, symbol="x", color=RISK_COLORS["EXTREME"])
         ))
-    fig.update_layout(height=410, title=f"{selected} — historical demand trend", yaxis_title="Job demand")
+    fig.update_layout(height=410, title=f"{selected} — historical demand trend", yaxis_title="Employment demand")
     st.plotly_chart(fig, use_container_width=True)
 
     st.markdown("### DMS composition")
@@ -369,18 +373,19 @@ def explainability(latest):
 def main():
     input_path, coords_df = sidebar()
     if not os.path.exists(input_path):
-        st.error("MGNREGA input data was not found.")
+        st.error("VB-G RAM G employment-demand input data was not found.")
         st.stop()
 
     mtime = os.path.getmtime(input_path)
     result, latest = load_pipeline(input_path, mtime)
 
     st.markdown(
-        """
+        f"""
         <div class="hero">
             <h1>🌱 GRAMPULSE</h1>
-            <p>AI-Powered Early Warning System for Rural Distress using MGNREGA Job-Demand Data</p>
-            <p><b>Predict Before the Crisis.</b> Detect unusual demand momentum before visible distress becomes a crisis.</p>
+            <p>AI-Powered Early Warning System for Rural Distress using VB-G RAM G employment-demand data</p>
+            <p><b>Predict Before the Crisis.</b> Detect unusual employment-demand momentum before visible distress becomes a crisis.</p>
+            <p><b>Current framework:</b> {PROGRAM_SHORT_NAME} • {ACT_NAME} • In force from {ACT_EFFECTIVE_DATE.strftime("%d %B %Y")} • {GUARANTEED_DAYS} days statutory employment guarantee</p>
         </div>
         """,
         unsafe_allow_html=True,
